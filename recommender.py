@@ -206,7 +206,7 @@ def recommend(userId: int, filters):
     return json.dumps(results)
 
 
-callFromNode = False
+callFromNode = True
 includeAll = [[1, 27691], [1946, 2022], [1, 6477],
               [False] * 4, [False] * 18, [False] * 51, [False] * 5, [False] * 18, [False] * 51, [False] * 5]
 if callFromNode:
