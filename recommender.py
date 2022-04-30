@@ -42,25 +42,25 @@ def satisfiesFilters(manga, filters):
         if not (filters[2][0] <= manga[3] <= filters[2][1]):
             return False  # chapterCount
     for i in range(len(filters[3])):
-        if filters[3][i] == "true" and manga[4+i] == 1:  # may need to change true data type
+        if filters[3][i] is True and manga[4+i] == 1:
             return False  # exclude status
     for i in range(len(filters[4])):
-        if filters[4][i] == "true" and manga[8+i] == 0:  # may need to change true data type
+        if filters[4][i] is True and manga[8+i] == 0:
             return False  # include genre
     for i in range(len(filters[5])):
-        if filters[5][i] == "true" and manga[26+i] == 0:  # may need to change true data type
+        if filters[5][i] is True and manga[26+i] == 0:
             return False  # include theme
     for i in range(len(filters[6])):
-        if filters[6][i] == "true" and manga[77+i] == 0:  # may need to change true data type
+        if filters[6][i] is True and manga[77+i] == 0:
             return False  # include demographic
     for i in range(len(filters[7])):
-        if filters[7][i] == "true" and manga[8+i] == 1:  # may need to change true data type
+        if filters[7][i] is True and manga[8+i] == 1:
             return False  # exclude genre
     for i in range(len(filters[8])):
-        if filters[8][i] == "true" and manga[26+i] == 1:  # may need to change true data type
+        if filters[8][i] is True and manga[26+i] == 1:
             return False  # exclude theme
     for i in range(len(filters[9])):
-        if filters[9][i] == "true" and manga[77+i] == 1:  # may need to change true data type
+        if filters[9][i] is True and manga[77+i] == 1:
             return False  # exclude demographic
     return True
 
@@ -191,7 +191,8 @@ def recommend(userId: int, filters):
     recommendations = recommendations[recommendations[:, 1].argsort()[::-1]]
     np.set_printoptions(suppress=True)
     #print(recommendations[0:10])
-    #print('\n'.join([str(manga[[i[0] for i in manga].index(recommendations[x][0])]) for x in range(len(recommendations[0:10]))]))
+    print('\n'.join([str(manga[[i[0] for i in manga].index(recommendations[x][0])]) for x in range(len(recommendations[0:10]))
+                     if recommendations[x][0] not in [i[0] for i in userTable]]))
     #get the manga rows that were recommended (and exclude those the user has already rated)
     recommendedManga = [manga[[i[0] for i in manga].index(recommendations[x][0])] for x in range(len(recommendations[0:100]))
                         if recommendations[x][0] not in [i[0] for i in userTable]]
@@ -202,13 +203,16 @@ def recommend(userId: int, filters):
 
     results = []
     for x in recommendedManga[0:20]:
-        results.append({"id": x[0], "title": x[2][1:-1], "pictureLink": x[9][1:-2]})
+        results.append({"id": x[0], "title": x[2][1:-1], "pictureLink": x[9][1:-2] if x[9] is not None else None})
     return json.dumps(results)
 
 
 callFromNode = True
 includeAll = [[1, 27691], [1946, 2022], [1, 6477],
               [False] * 4, [False] * 18, [False] * 51, [False] * 5, [False] * 18, [False] * 51, [False] * 5]
+testFilter = [[1, 27691], [2000, 2022], [1, 6477],
+              [False, True, False, False], [False] * 18, [False] * 51, [False] * 5, [False] * 18, [False] * 51, [False] * 5]
+jsonTestFilter = "[[1,27691],[2010,2022],[1,6477],[false,true,false,false],[true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false]]"
 if callFromNode:
     userId = int(sys.argv[1])
     filtersIn = sys.argv[2]
@@ -217,4 +221,4 @@ if callFromNode:
     print(recommend(userId, filtersIn))
     sys.stdout.flush()
 else:
-    print(recommend(10, includeAll))
+    print(recommend(10, json.loads(jsonTestFilter)))
