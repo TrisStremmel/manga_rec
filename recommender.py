@@ -198,13 +198,12 @@ def recommend(userId: int, filters):
 
     myCursor.close()
     # return list of json with manga info for the highest scored recommendations
-    return [json.dumps({"id": x[0], "title": x[2], "pictureLink": x[9]}) for x in recommendedManga[0:20]]
+    return [json.dumps({"id": x[0], "title": x[2][1:-1], "pictureLink": x[9][1:-1]}) for x in recommendedManga[0:20]]
 
 
-callFromNode = True
+callFromNode = False
 includeAll = [[1, 27691], [1946, 2022], [1, 6477],
               [False] * 4, [False] * 18, [False] * 51, [False] * 5, [False] * 18, [False] * 51, [False] * 5]
-#print(recommend(10, includeAll))
 if callFromNode:
     userId = int(sys.argv[1])
     filtersIn = sys.argv[2]
@@ -212,3 +211,5 @@ if callFromNode:
 
     print(recommend(userId, filtersIn))
     sys.stdout.flush()
+else:
+    print(recommend(10, includeAll))
