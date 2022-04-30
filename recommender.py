@@ -1,6 +1,7 @@
 import json
 import base64
 import mysql.connector
+import sys
 import numpy as np
 
 ratingMap = {5: 'likes', 4: 'interested', 3: 'neutral', 2: 'dislikes', 1: 'not-interested'}
@@ -58,9 +59,9 @@ def satisfiesFilters(manga, filters):
     for i in range(len(filters[8])):
         if filters[8][i] == "true" and manga[26+i] == 1:  # may need to change true data type
             return False  # exclude theme
-    for i in range(len(filters[9])):
+    '''for i in range(len(filters[9])): add back TODO fix
         if filters[9][i] == "true" and manga[77+i] == 1:  # may need to change true data type
-            return False  # exclude demographic
+            return False  # exclude demographic'''
     return True
 
 def getStatusSet(myCursor):
@@ -138,15 +139,15 @@ def recommend(userId: int, filters):
     manga = [x for x in myCursor]
     #0:id, 1:popularity, 2: releaseDate, 3:chapterCount, 4-7:status, 8-25:genre, 26-76:theme, 77-81:demographic
     mangaEncoded = encodeManga(myCursor, manga, filters)
-    #print(manga[0])
-    #print(mangaEncoded[0])
+    ##print(manga[0])
+    ##print(mangaEncoded[0])
 
     # get user's manga ratings
     myCursor.execute("select * from ratings where userId = %s", [userId])
     ratings = [x for x in myCursor]
     convertedRatings = [convertRating(x) for x in ratings]
-    #print(convertedRatings)
-    # print('\n'.join([str(x) for x in convertedRatings]))
+    ##print(convertedRatings)
+    # #print('\n'.join([str(x) for x in convertedRatings]))
 
     #create table of manga the user has rated (make has subtable of one hot table so you dont redo work)
     userTable = []
@@ -157,40 +158,40 @@ def recommend(userId: int, filters):
                 userTable.append(mangaEncoded[j][4:])  # only uses the one hot values for now
                 filteredRatings.append(list(convertedRatings[i]))
                 break
-    #print('\n'.join([str(x) for x in userTable]))
+    ##print('\n'.join([str(x) for x in userTable]))
     for i in range(len(manga)):
         manga[i] = list(manga[i])
         del manga[i][3]
         #del manga[i][9]
-    print('\n'.join([str(manga[[i[0] for i in manga].index(filteredRatings[x][0])]) for x in range(len(filteredRatings))]))
+    #print('\n'.join([str(manga[[i[0] for i in manga].index(filteredRatings[x][0])]) for x in range(len(filteredRatings))]))
 
     #create a user preference vector (average or dot product of all user ratings)
     userProfile = np.array(userTable).T.dot([i[1] for i in filteredRatings])
-    print([i[1] for i in filteredRatings])
-    #print(', '.join([str(x) for x in userProfile]))
-    print(userProfile)
-    #print(userProfile.shape)
+    #print([i[1] for i in filteredRatings])
+    ##print(', '.join([str(x) for x in userProfile]))
+    #print(userProfile)
+    ##print(userProfile.shape)
 
     '''for i in range(len(mangaEncoded)):
         mangaEncoded[i] = mangaEncoded[i][4:]'''
     # create recommendations
     mangaGenreTable = np.delete(np.array(mangaEncoded), np.s_[0:4], axis=1)
     recommendationTable = ((np.array(mangaGenreTable) * userProfile).sum(axis=1))/(userProfile.sum())
-    #print(recommendationTable[0:10])
-    #print(type(recommendationTable))
+    ##print(recommendationTable[0:10])
+    ##print(type(recommendationTable))
     recommendations = np.zeros(shape=(recommendationTable.shape[0], 2))
     for i in range(len(recommendationTable)):
         #recommendationTable[i] = np.array([mangaEncoded[i][0], recommendationTable[i]])
         recommendations[i][0] = mangaEncoded[i][0]
         recommendations[i][1] = recommendationTable[i]
-    # print(recommendationTable.shape)
-    # print(recommendations[0:10])
-    # print(recommendationTable[0:10])
+    # #print(recommendationTable.shape)
+    # #print(recommendations[0:10])
+    # #print(recommendationTable[0:10])
     #recommendations = recommendations[recommendations[:, 1].argsort()]
     recommendations = recommendations[recommendations[:, 1].argsort()[::-1]]
     np.set_printoptions(suppress=True)
-    print(recommendations[0:10])
-    print('\n'.join([str(manga[[i[0] for i in manga].index(recommendations[x][0])]) for x in range(len(recommendations[0:10]))]))
+    #print(recommendations[0:10])
+    #print('\n'.join([str(manga[[i[0] for i in manga].index(recommendations[x][0])]) for x in range(len(recommendations[0:10]))]))
     #get the manga rows that were recommended (and exclude those the user has already rated)
     recommendedManga = [manga[[i[0] for i in manga].index(recommendations[x][0])] for x in range(len(recommendations[0:100]))
                         if recommendations[x][0] not in [i[0] for i in userTable]]
@@ -200,6 +201,14 @@ def recommend(userId: int, filters):
     return [json.dumps({"id": x[0], "title": x[2], "pictureLink": x[9]}) for x in recommendedManga[0:20]]
 
 
+callFromNode = True
 includeAll = [[1, 27691], [1946, 2022], [1, 6477],
               [False] * 4, [False] * 18, [False] * 51, [False] * 5, [False] * 18, [False] * 51, [False] * 5]
-print(recommend(10, includeAll))
+#print(recommend(10, includeAll))
+if callFromNode:
+    userId = int(sys.argv[1])
+    filtersIn = sys.argv[2]
+    filtersIn = json.loads(filtersIn)
+
+    print(recommend(userId, filtersIn))
+    sys.stdout.flush()
