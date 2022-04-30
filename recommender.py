@@ -198,7 +198,12 @@ def recommend(userId: int, filters):
 
     myCursor.close()
     # return list of json with manga info for the highest scored recommendations
-    return [json.dumps({"id": x[0], "title": x[2][1:-1], "pictureLink": x[9][1:-1]}) for x in recommendedManga[0:20]]
+    #results = [json.dumps({"id": x[0], "title": x[2][1:-1], "pictureLink": x[9][1:-2]}) for x in recommendedManga[0:20]]
+
+    results = []
+    for x in recommendedManga[0:20]:
+        results.append({"id": x[0], "title": x[2][1:-1], "pictureLink": x[9][1:-2]})
+    return json.dumps(results)
 
 
 callFromNode = False
