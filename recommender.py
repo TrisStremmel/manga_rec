@@ -52,16 +52,16 @@ def satisfiesFilters(manga, filters):
             return False  # include theme
     for i in range(len(filters[6])):
         if filters[6][i] == "true" and manga[77+i] == 0:  # may need to change true data type
-            return False  # include
+            return False  # include demographic
     for i in range(len(filters[7])):
         if filters[7][i] == "true" and manga[8+i] == 1:  # may need to change true data type
             return False  # exclude genre
     for i in range(len(filters[8])):
         if filters[8][i] == "true" and manga[26+i] == 1:  # may need to change true data type
             return False  # exclude theme
-    '''for i in range(len(filters[9])): add back TODO fix
+    for i in range(len(filters[9])):
         if filters[9][i] == "true" and manga[77+i] == 1:  # may need to change true data type
-            return False  # exclude demographic'''
+            return False  # exclude demographic
     return True
 
 def getStatusSet(myCursor):
