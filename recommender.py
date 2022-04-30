@@ -210,9 +210,10 @@ def recommend(userId: int, filters):
 callFromNode = True
 includeAll = [[1, 27691], [1946, 2022], [1, 6477],
               [False] * 4, [False] * 18, [False] * 51, [False] * 5, [False] * 18, [False] * 51, [False] * 5]
-testFilter = [[1, 27691], [2000, 2022], [1, 6477],
-              [False, True, False, False], [False] * 18, [False] * 51, [False] * 5, [False] * 18, [False] * 51, [False] * 5]
+testFilter = [[1, 1000], [2005, 2011], [1, 33],
+              [True, False, True, True], [False] * 18, [False] * 51, [False] * 5, [False] * 18, [False] * 51, [False] * 5]
 jsonTestFilter = "[[1,27691],[2010,2022],[1,6477],[false,true,false,false],[true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false]]"
+jsonTestFilter2 = "[[1, 1000],[2005, 2011],[1, 33],[false,true,false,false],[true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false]]"
 if callFromNode:
     userId = int(sys.argv[1])
     filtersIn = sys.argv[2]
@@ -221,4 +222,5 @@ if callFromNode:
     print(recommend(userId, filtersIn))
     sys.stdout.flush()
 else:
-    print(recommend(10, json.loads(jsonTestFilter)))
+    #print(recommend(10, testFilter))
+    print(recommend(10, json.loads(jsonTestFilter2)))
