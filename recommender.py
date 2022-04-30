@@ -191,8 +191,8 @@ def recommend(userId: int, filters):
     recommendations = recommendations[recommendations[:, 1].argsort()[::-1]]
     np.set_printoptions(suppress=True)
     #print(recommendations[0:10])
-    print('\n'.join([str(manga[[i[0] for i in manga].index(recommendations[x][0])]) for x in range(len(recommendations[0:10]))
-                     if recommendations[x][0] not in [i[0] for i in userTable]]))
+    #print('\n'.join([str(manga[[i[0] for i in manga].index(recommendations[x][0])]) for x in range(len(recommendations[0:10]))
+    #                 if recommendations[x][0] not in [i[0] for i in userTable]]))
     #get the manga rows that were recommended (and exclude those the user has already rated)
     recommendedManga = [manga[[i[0] for i in manga].index(recommendations[x][0])] for x in range(len(recommendations[0:100]))
                         if recommendations[x][0] not in [i[0] for i in userTable]]
