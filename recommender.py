@@ -175,6 +175,7 @@ def recommend(userId: int, filters):
     '''for i in range(len(mangaEncoded)):
         mangaEncoded[i] = mangaEncoded[i][4:]'''
     # create recommendations
+    #print(mangaEncoded)
     mangaGenreTable = np.delete(np.array(mangaEncoded), np.s_[0:4], axis=1)
     recommendationTable = ((np.array(mangaGenreTable) * userProfile).sum(axis=1))/(userProfile.sum())
     ##print(recommendationTable[0:10])
@@ -203,7 +204,7 @@ def recommend(userId: int, filters):
 
     results = []
     for x in recommendedManga[0:20]:
-        results.append({"id": x[0], "title": x[2][1:-1], "pictureLink": x[9][1:-2] if x[9] is not None else None})
+        results.append({"id": x[0], "title": x[2], "pictureLink": x[9]})
     return json.dumps(results)
 
 
@@ -212,8 +213,9 @@ includeAll = [[1, 27691], [1946, 2022], [1, 6477],
               [False] * 4, [False] * 18, [False] * 51, [False] * 5, [False] * 18, [False] * 51, [False] * 5]
 testFilter = [[1, 1000], [2005, 2011], [1, 33],
               [True, False, True, True], [False] * 18, [False] * 51, [False] * 5, [False] * 18, [False] * 51, [False] * 5]
-jsonTestFilter = "[[1,27691],[2010,2022],[1,6477],[false,true,false,false],[true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false]]"
+jsonTestFilter = "[[1,27691],[1946,1999],[1,6477],[false,true,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false]]"
 jsonTestFilter2 = "[[1, 1000],[2005, 2011],[1, 33],[false,true,false,false],[true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false]]"
+jsonTestFilter3 = "[[1,27691],[1946,1999],[1,6477],[false,false,false,false],[false,true,false,true,true,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[false,false,false,false,false]]"
 if callFromNode:
     userId = int(sys.argv[1])
     filtersIn = sys.argv[2]
@@ -223,4 +225,4 @@ if callFromNode:
     sys.stdout.flush()
 else:
     #print(recommend(10, testFilter))
-    print(recommend(10, json.loads(jsonTestFilter2)))
+    print(recommend(500, json.loads(jsonTestFilter2)))
