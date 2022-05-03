@@ -61,4 +61,4 @@ def getColumnLengths():
     print("demographic count:", len(demographicSet))
 
 
-#getColumnLengths()
+getColumnLengths()

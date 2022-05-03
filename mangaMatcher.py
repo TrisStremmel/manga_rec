@@ -17,7 +17,7 @@ numRatings = 0
 for row in ratings:
     numRatings += 1
     if row[0] == 'ratingId':
-        continue
+        continue  # skip header of csv
     if row[2] not in manga_dict:
         continue
     numUsableRatings += 1
